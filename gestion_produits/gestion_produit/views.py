@@ -1,6 +1,6 @@
 #from django.http import JsonResponse
 
-from django.shortcuts import render,get_object_or_404,redirect,HttpResponse
+from django.shortcuts import render,get_object_or_404,redirect
 from .models import Produits,Categorie,Card,Order,Commentaires
 from django.urls import reverse 
 
@@ -9,12 +9,6 @@ from django.urls import reverse
 def list_menu(request):
     donnees = Produits.objects.all()
     cat = Categorie.objects.all()
-    if request.method == 'POST':
-        msg = request.POST.get('message')
-        com = Commentaires.objects.create(
-            message=msg,
-            userP=request.user)
-        com.save()
     context = {'donnees':donnees,'cat':cat}
    
     return render(request, 'gestion_produit/index_2.html',context)
@@ -24,13 +18,8 @@ def list_menu(request):
 def detail_produit(request,my_id):
     var = get_object_or_404(Produits,pk=my_id)
     contexte = {'var':var}
+    # pour les commentaires
 
-    if request.method == 'POST':
-        msg = request.POST.get('message')
-        com = Commentaires.objects.create(
-            message=msg,
-            userP=request.user)
-        com.save()
 
     return render(request,'gestion_produit/single-product.html',contexte)
 
@@ -39,12 +28,6 @@ def all_products(request):
     donnees = Produits.objects.all()
     context = {'donnees':donnees}
 
-    if request.method == 'POST':
-        msg = request.POST.get('message')
-        com = Commentaires.objects.create(
-            message=msg,
-            userP=request.user)
-        com.save()
 
     return render(request, 'gestion_produit/all.html',context)
 
@@ -52,13 +35,6 @@ def all_products(request):
 def plats(request):
     donnees = Produits.objects.filter(categorie__nom_categorie='Plats')
     context = {'donnees':donnees}
-
-    if request.method == 'POST':
-        msg = request.POST.get('message')
-        com = Commentaires.objects.create(
-            message=msg,
-            userP=request.user)
-        com.save()
 
     return render(request,'gestion_produit/plats.html',context)
 
@@ -93,19 +69,23 @@ def apropos(request):
     # fonction pour les commentaires
 def commentaire(request):
     
-    if request.method == 'POST':
-        msg = request.POST.get('message')
-        com = Commentaires.objects.create(
-            message=msg,
-            userP=request.user)
-        com.save()
-        return reverse('list_menu')
+    # if request.method == 'POST':
+    #     msg = request.POST.get('message')
+    #     com = Commentaires.objects.create(
+    #         message=msg,
+    #         userP=request.user)
+    #     com.save()
+    #     return reverse('list_menu')
+    # comment = Commentaires.objects.all()
+    # context = {'comment':comment}
+    return render(request,'gestion_produit/msg.html')
+
     
 
 #voit les commentaire
-def view_comment(request):
-    comment = Commentaires.objects.all()
-    return render(request,'gestion_produit/voir_comment.html',comment)
+# def view_comment(request):
+#     comment = Commentaires.objects.all()
+#     return reverse('list_menu')
 
 def add_to_card(request,my_id):
     # recuperer notre utilisateur
@@ -129,11 +109,18 @@ def add_to_card(request,my_id):
         order.save()
     return redirect(reverse("list_menu"))
 
+
 # fn qui affiche le panier de l'utilisateur
 def cart(request):
     #recuperer le panier de l'utilisateur. la fn ci_dessous renvoi l'objet s'il exite ou renvoie une erreur sinon
     cart = get_object_or_404(Card, user=request.user)
-    nb = cart.orders.count()
-    
-    context={"orders":cart.orders.all(),"nb":nb}# tout les elements de notre panier
-    return render(request, 'gestion_produit/cart.html')
+    # panier = Order.objects.filter(user=request.user)
+    # total = sum(product.prix for product in panier.product.all())
+    context={"orders":cart.orders.all()}# tout les elements de notre panier
+    return render(request, 'gestion_produit/cart.html',context)
+
+# fn pour supprimer un produit dans le panier
+def del_prod_card(request,my_id):
+    product_del = product_del = get_object_or_404(Order,id=my_id)
+    product_del.delete()
+    return redirect('cart')

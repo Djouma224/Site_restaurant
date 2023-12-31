@@ -30,23 +30,23 @@
 						<thead class="cart-table-head">
 							<tr class="table-head-row">
 								<th class="product-remove"></th>
-								<th class="product-image">Image du produi</th>
+								<th class="product-image">Images des produits</th>
 								<th class="product-name">Nom</th>
-								<th class="product-price">prix</th>
+								<th class="product-price">Prix/U</th>
 								<th class="product-quantity">Quantité</th>
-								<th class="product-total">Total</th>
+								<th class="product-total">Prix</th>
 							</tr>
 						</thead>
 						<tbody>
 							
 							{% for order in orders %}
 							<tr class="table-body-row">
-								<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
+								<td class="product-remove"><a href="{% url 'del_prod_card' order.id %}"><i class="far fa-window-close"></i></a></td>
 								<td class="product-image"><img src="{{ order.product.image.url }}" alt=""></td>
 								<td class="product-name">{{ order.product.nom }}</td>
 								<td class="product-price">{{ order.product.prix }} GNF</td>
-								<td class="product-quantity"><input type="number" placeholder="{{ order.qte }}"></td>
-								<td class="product-total"></td>
+								<td class="product-quantity"><input type="number" value="{{ order.qte }}"   placeholder=""></td>
+								<td class="product-total">{{ total }}</td>
 							</tr>					
 
 							{% endfor %}
@@ -62,7 +62,7 @@
 						<thead class="total-table-head">
 							<tr class="table-total-row">
 								<th>Total</th>
-								<th>Price</th>
+								<th>Total</th>
 							</tr>
 						</thead>
 						<tbody>

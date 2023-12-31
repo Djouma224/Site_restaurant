@@ -50,12 +50,13 @@ class Card(models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL,on_delete=models.CASCADE)
     orders = models.ManyToManyField(Order)
     date_comande = models.DateTimeField(blank=True, null=True)
+    
     def __str__(self):
         return self.user.username
     
     
 class Commentaires(models.Model):
-    message = models.TextField()
+    message = models.TextField(null=True)
     date = models.DateField(auto_now_add=True)
     userP = models.ForeignKey(AUTH_USER_MODEL,on_delete=models.CASCADE)
 
@@ -64,7 +65,7 @@ class Commentaires(models.Model):
         verbose_name_plural = ('commenamentaire')
 
     def __str__(self):
-        return self.message
+        return f'{self.message}'
 
 
 
